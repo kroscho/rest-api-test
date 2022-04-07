@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"net/http"
+	"rest-api-test/internal/handlers/user"
+	"rest-api-test/pkg/logging"
 	"time"
-	"youtube_lesson/internal/handlers/user"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -17,13 +17,14 @@ func IndexHandler(w http.ResponseWriter, r *http.Request, params httprouter.Para
 }
 
 func main() {
-	log.Println("create router")
+	logger := logging.GetLogger()
+	logger.Info("create router")
 	// создаем роутер
 	router := httprouter.New()
 
-	log.Println("register user handler")
+	logger.Info("register user handler")
 	// создаем handler
-	handler := user.NewHandler()
+	handler := user.NewHandler(logger)
 	// регистрируем handler в router
 	handler.Register(router)
 
@@ -32,7 +33,8 @@ func main() {
 
 // стартует сервер на порту 1234, по протоколу tsp
 func start(router *httprouter.Router) {
-	log.Println("start application")
+	logger := logging.GetLogger()
+	logger.Info("start application")
 
 	listener, err := net.Listen("tcp", "0.0.0.0:1234")
 	if err != nil {
@@ -45,6 +47,6 @@ func start(router *httprouter.Router) {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	log.Println("server is listening port 1234")
-	log.Fatalln(server.Serve(listener))
+	logger.Info("server is listening port 1234")
+	logger.Fatal(server.Serve(listener))
 }

@@ -2,7 +2,8 @@ package user
 
 import (
 	"net/http"
-	"youtube_lesson/internal/handlers"
+	"rest-api-test/internal/handlers"
+	"rest-api-test/pkg/logging"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -16,10 +17,13 @@ const (
 
 // нужно для обеспечения процессов создания, получения списка и тд
 type handler struct {
+	logger logging.Logger
 }
 
-func NewHandler() handlers.Handler {
-	return &handler{}
+func NewHandler(logger logging.Logger) handlers.Handler {
+	return &handler{
+		logger: logger,
+	}
 }
 
 // регистрация handler в router
