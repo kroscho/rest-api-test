@@ -23,3 +23,10 @@ DELETE  http://localhost:1234/users/1
 Content-Type: application/json
 
 {}
+
+###
+
+GET  http://localhost:1234/authors/1ad0596d-e43d-4093-a7fe-a6c1074f6219
+Content-Type: application/json
+
+{}

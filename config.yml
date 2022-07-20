@@ -5,3 +5,18 @@ listen:
   type: port
   port: 1234
   bind_ip: 0.0.0.0
+mongodb:
+  host: localhost
+  port: 27017
+  database: user-service
+  auth_db:
+  username:
+  password:
+  collection: users
+storage:
+  host: localhost
+  port: 5432
+  username: postgres
+  password: ybrbnfrhen123
+  database: RestApiGo
+  maxAttempts: 3

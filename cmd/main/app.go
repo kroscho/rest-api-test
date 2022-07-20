@@ -1,24 +1,22 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"net/http"
 	"os"
 	"path"
 	"path/filepath"
+	"rest-api-test/internal/author"
+	authorRepo "rest-api-test/internal/author/db"
 	"rest-api-test/internal/config"
-	"rest-api-test/internal/handlers/user"
+	"rest-api-test/pkg/client/postgresql"
 	"rest-api-test/pkg/logging"
 	"time"
 
 	"github.com/julienschmidt/httprouter"
 )
-
-func IndexHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	name := params.ByName("name")
-	w.Write([]byte(fmt.Sprintf("Hello %s", name)))
-}
 
 func main() {
 	logger := logging.GetLogger()
@@ -28,11 +26,15 @@ func main() {
 
 	cfg := config.GetConfig()
 
-	logger.Info("register user handler")
-	// создаем handler
-	handler := user.NewHandler(logger)
-	// регистрируем handler в router
-	handler.Register(router)
+	postgreSQLClient, err := postgresql.NewClient(context.TODO(), cfg.Storage)
+	if err != nil {
+		logger.Fatalf("%v", err)
+	}
+	repository := authorRepo.NewRepository(postgreSQLClient, logger)
+
+	logger.Info("register author handler")
+	authorHandler := author.NewHandler(repository, logger)
+	authorHandler.Register(router)
 
 	start(router, cfg)
 }
